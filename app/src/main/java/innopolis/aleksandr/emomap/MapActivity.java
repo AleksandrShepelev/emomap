@@ -11,6 +11,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,7 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback,  EmojiChooserFragment.NoticeDialogListener  {
 
     private static final String TAG = "DBG";
     private GoogleMap mMap;
@@ -30,6 +36,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
         locButton = (Button)findViewById(R.id.location_button);
         locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
@@ -41,6 +48,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             startActivity(intent);
         }
 
+
+        FloatingActionButton actionButton = (FloatingActionButton) findViewById(R.id.fab);
+        actionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new EmojiChooserFragment().show(getSupportFragmentManager(), "myTag");
+            }
+        });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -94,5 +109,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         }
     }
 
+
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        Toast.makeText(MapActivity.this, "YES", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        Toast.makeText(MapActivity.this, "No", Toast.LENGTH_SHORT).show();
+    }
 
 }
