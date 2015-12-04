@@ -1,68 +1,51 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <RadioGroup
         android:id="@+id/radioGroup1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
+        android:layout_width="240dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
         android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radioAndroid"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/happy_radio_button"
             android:button="@null"
             android:checked="true"
-            android:gravity="center"
-            android:padding="5dp" />
+            android:gravity="center" />
 
         <RadioButton
             android:id="@+id/radioiPhone"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/indifferent_radio_button"
             android:button="@null"
-            android:gravity="center"
-            android:padding="5dp" />
+            android:gravity="center" />
 
         <RadioButton
             android:id="@+id/radioWindows"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/sad_radio_button"
             android:button="@null"
-            android:gravity="center"
-            android:padding="5dp" />
+            android:gravity="center" />
+
     </RadioGroup>
 
     <EditText
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_below="@+id/radioGroup1"
+        android:layout_marginTop="50dp"
         android:hint="Name"
         android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
-        android:fontFamily="sans-serif"
-        android:hint="Password"
-        android:inputType="textPassword" />
-</LinearLayout>
+</RelativeLayout>

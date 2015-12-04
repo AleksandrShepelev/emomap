@@ -17,7 +17,7 @@ public class EmojiChooserFragment extends DialogFragment{
         * implement this interface in order to receive event callbacks.
         * Each method passes the DialogFragment in case the host needs to query it. */
     public interface NoticeDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
+        public void onDialogPositiveClick(DialogFragment dialog, String string);
         public void onDialogNegativeClick(DialogFragment dialog);
     }
 
@@ -48,11 +48,10 @@ public class EmojiChooserFragment extends DialogFragment{
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(inflater.inflate(R.layout.choose_emoji, null))
                 // Add action buttons
-                .setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Put emoji to my current location", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogPositiveClick(EmojiChooserFragment.this);
-                        // sign in the user ...
+                        mListener.onDialogPositiveClick(EmojiChooserFragment.this, "string");
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
