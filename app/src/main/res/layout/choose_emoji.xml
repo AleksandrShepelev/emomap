@@ -4,14 +4,14 @@
     android:orientation="vertical">
 
     <RadioGroup
-        android:id="@+id/radioGroup1"
+        android:id="@+id/mood_chooser"
         android:layout_width="240dp"
         android:layout_height="80dp"
         android:layout_centerInParent="true"
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/radioAndroid"
+            android:id="@+id/happy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -21,7 +21,7 @@
             android:gravity="center" />
 
         <RadioButton
-            android:id="@+id/radioiPhone"
+            android:id="@+id/indifferent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -30,7 +30,7 @@
             android:gravity="center" />
 
         <RadioButton
-            android:id="@+id/radioWindows"
+            android:id="@+id/sad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -44,7 +44,7 @@
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/radioGroup1"
+        android:layout_below="@+id/mood_chooser"
         android:layout_marginTop="50dp"
         android:hint="Name"
         android:inputType="textEmailAddress" />
