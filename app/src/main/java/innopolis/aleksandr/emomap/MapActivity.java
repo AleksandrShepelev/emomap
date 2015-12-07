@@ -1,5 +1,8 @@
 package innopolis.aleksandr.emomap;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,8 +13,12 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,12 +34,15 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback, EmojiChooserFragment.NoticeDialogListener {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, EmojiChooserFragment.NoticeDialogListener {
 
     private static final String TAG = "EMOJI";
     public static final String EMO_MARKER = "EmoMarker";
@@ -46,11 +56,45 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
         initializeMap();
         initializeFab();
 
+        MyTimerTask myTask = new MyTimerTask();
+        Timer myTimer = new Timer();
+
+        myTimer.schedule(myTask, 1000 * 60, 1000 * 60);
     }
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_logout) {
+            // Call the Parse log out method
+            ParseUser.logOut();
+            // Start and intent for the dispatch activity
+            Intent intent = new Intent(MapActivity.this, DispatchActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void initializeFab() {
         FloatingActionButton actionButton = (FloatingActionButton) findViewById(R.id.fab);
@@ -109,7 +153,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mMap = googleMap;
         LatLng currentLocation = getCurrentLocation();
         if (currentLocation != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+       //     mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12.0f));
+
+            //     mMap.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);
         }
         loadMarkers();
     }
@@ -161,7 +209,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     private void putMarkerOnMap(double newLat, double newLng, String userComment, int mood, Date date) {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(newLat, newLng)).title(userComment).snippet(userComment + "\n" + date.toString()).icon(getIcon(mood)));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(newLat, newLng)).title(ParseUser.getCurrentUser().getUsername()).snippet(userComment + "\n" + date.toString()).icon(getIcon(mood)));
     }
 
     private BitmapDescriptor getIcon(int mood) {
@@ -184,7 +232,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         ParseObject gameScore = new ParseObject(EMO_MARKER);
         gameScore.put("lat", currentLoc.latitude);
         gameScore.put("long", currentLoc.longitude);
-        gameScore.put("user", userComment);
+        gameScore.put("user", ParseUser.getCurrentUser().getUsername());
         gameScore.put("comment", userComment);
         gameScore.put("mood", mood);
         gameScore.put("date", date);
@@ -205,6 +253,48 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         //Do nothing
+    }
+
+
+    class MyTimerTask extends TimerTask {
+        public void run() {
+
+            generateNotification(getApplicationContext(), "I need your mood");
+        }
+    }
+
+    private void generateNotification(Context context, String message) {
+
+        int icon = R.drawable.happy_icon;
+        long when = System.currentTimeMillis();
+        String appname = context.getResources().getString(R.string.app_name);
+        NotificationManager notificationManager = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        Notification notification;
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+                new Intent(context, MapActivity.class), 0);
+
+        // To support 2.3 os, we use "Notification" class and 3.0+ os will use
+        // "NotificationCompat.Builder" class.
+        if (currentapiVersion < android.os.Build.VERSION_CODES.HONEYCOMB) {
+            notification = new Notification(icon, message, 0);
+            notification.setLatestEventInfo(context, appname, message,
+                    contentIntent);
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+            notificationManager.notify((int) when, notification);
+
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                    context);
+            notification = builder.setContentIntent(contentIntent)
+                    .setSmallIcon(icon).setTicker(appname).setWhen(0)
+                    .setAutoCancel(true).setContentTitle(appname)
+                    .setContentText(message).build();
+
+            notificationManager.notify((int) when, notification);
+
+        }
     }
 
 }
